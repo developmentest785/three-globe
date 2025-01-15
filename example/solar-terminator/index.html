@@ -1,11 +1,16 @@
 <head>
-  <script type="importmap">{ "imports": {
-    "three": "https://esm.sh/three",
-    "three/addons/": "https://esm.sh/three/examples/jsm/"
-  }}</script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://esm.sh/three",
+        "three/build/": "https://esm.sh/three/build/",
+        "three/addons/": "https://esm.sh/three/examples/jsm/"
+      }
+    }
+  </script>
 
-<!--  <script type="module"> import * as THREE from 'three'; window.THREE = THREE;</script>-->
-<!--  <script src="../../dist/three-globe.js" defer></script>-->
+  <!--  <script type="module"> import * as THREE from 'three'; window.THREE = THREE;</script>-->
+  <!--  <script src="../../dist/three-globe.js" defer></script>-->
 
   <style>
     body {
@@ -35,10 +40,10 @@
 
     const VELOCITY = 9; // minutes per frame
 
-    const sunPosAt = dt => {
+    const sunPosAt = (dt) => {
       const day = new Date(+dt).setUTCHours(0, 0, 0, 0);
       const t = solar.century(dt);
-      const longitude = (day - dt) / 864e5 * 360 - 180;
+      const longitude = ((day - dt) / 864e5) * 360 - 180;
       return [longitude - solar.equationOfTime(t) / 4, solar.declination(t)];
     };
 
@@ -49,13 +54,20 @@
     const Globe = new ThreeGlobe()
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
       .tilesData([solarTile])
-      .tileLng(d => d.pos[0])
-      .tileLat(d => d.pos[1])
+      .tileLng((d) => d.pos[0])
+      .tileLat((d) => d.pos[1])
       .tileAltitude(0.005)
       .tileWidth(180)
       .tileHeight(180)
       .tileUseGlobeProjection(false)
-      .tileMaterial(() => new THREE.MeshLambertMaterial({ color: '#ffff00', opacity: 0.3, transparent: true }))
+      .tileMaterial(
+        () =>
+          new THREE.MeshLambertMaterial({
+            color: '#ffff00',
+            opacity: 0.3,
+            transparent: true,
+          })
+      )
       .tilesTransitionDuration(0);
 
     // animate time of day
@@ -82,7 +94,7 @@
 
     // Setup camera
     const camera = new THREE.PerspectiveCamera();
-    camera.aspect = window.innerWidth/ window.innerHeight;
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     camera.position.z = 500;
 
@@ -93,7 +105,8 @@
     tbControls.zoomSpeed = 0.8;
 
     // Kick-off renderer
-    (function animate() { // IIFE
+    (function animate() {
+      // IIFE
       // Frame cycle
       tbControls.update();
       renderer.render(scene, camera);

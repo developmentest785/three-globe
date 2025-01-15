@@ -1,13 +1,22 @@
 <head>
-  <style> body { margin: 0; } </style>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
 
-  <script type="importmap">{ "imports": {
-    "three": "https://esm.sh/three",
-    "three/addons/": "https://esm.sh/three/examples/jsm/"
-  }}</script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://esm.sh/three",
+        "three/build/": "https://esm.sh/three/build/",
+        "three/addons/": "https://esm.sh/three/examples/jsm/"
+      }
+    }
+  </script>
 
-<!--  <script type="module"> import * as THREE from 'three'; window.THREE = THREE;</script>-->
-<!--  <script src="../../dist/three-globe.js" defer></script>-->
+  <!--  <script type="module"> import * as THREE from 'three'; window.THREE = THREE;</script>-->
+  <!--  <script src="../../dist/three-globe.js" defer></script>-->
 </head>
 
 <body>
@@ -18,8 +27,9 @@
     import * as THREE from 'https://esm.sh/three';
     import { TrackballControls } from 'three/addons/controls/TrackballControls.js?external=three';
 
-    const Globe = new ThreeGlobe()
-      .globeTileEngineUrl((x, y, l) => `https://tile.openstreetmap.org/${l}/${x}/${y}.png`);
+    const Globe = new ThreeGlobe().globeTileEngineUrl(
+      (x, y, l) => `https://tile.openstreetmap.org/${l}/${x}/${y}.png`
+    );
 
     const R = Globe.getGlobeRadius();
 
@@ -36,7 +46,7 @@
 
     // Setup camera
     const camera = new THREE.PerspectiveCamera();
-    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.near = 1e-3;
     camera.far = R * 100;
     camera.updateProjectionMatrix();
@@ -44,7 +54,7 @@
 
     // Add camera controls
     const tbControls = new TrackballControls(camera, renderer.domElement);
-    tbControls.minDistance = R * (1 + 5 / 2**Globe.globeTileEngineMaxLevel()); // Just above surface, adjusted resolution to max level
+    tbControls.minDistance = R * (1 + 5 / 2 ** Globe.globeTileEngineMaxLevel()); // Just above surface, adjusted resolution to max level
     tbControls.maxDistance = camera.far - R;
     tbControls.rotateSpeed = 5;
     tbControls.zoomSpeed = 0.8;
@@ -54,12 +64,13 @@
     tbControls.addEventListener('change', () => {
       Globe.setPointOfView(camera);
       const distToSurface = camera.position.distanceTo(Globe.position) - R;
-      tbControls.rotateSpeed = distToSurface / R * 2.5;
+      tbControls.rotateSpeed = (distToSurface / R) * 2.5;
       tbControls.zoomSpeed = Math.sqrt(distToSurface / R) * 0.5;
     });
 
     // Kick-off renderer
-    (function animate() { // IIFE
+    (function animate() {
+      // IIFE
       // Frame cycle
       tbControls.update();
       renderer.render(scene, camera);
